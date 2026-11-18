@@ -1,75 +1,64 @@
-# React + TypeScript + Vite
+<div align="center"  >
+    <h1 align="center" >
+        Pomodoro
+        <br />
+    </h1>
+    <img src="https://skillicons.dev/icons?i=react" alt="">&nbsp;
+    <img src="https://skillicons.dev/icons?i=ts" alt="">&nbsp;
+    <img src="https://skillicons.dev/icons?i=vite" alt="">
+</div>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Definição do Projeto
 
-Currently, two official plugins are available:
+Aplicação web de gestão de foco baseada na técnica Pomodoro. O projeto está sendo desenvolvido em equipe como parte da disciplina de Desenvolvimento Web. A proposta é permitir configurar temporizadores, acompanhar sessões de foco e pausas e organizar tarefas de estudo.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tecnologias
 
-## React Compiler
+- React
+- TypeScript
+- Vite
+- ESLint e Prettier
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Como executar
 
-## Expanding the ESLint configuration
+### Pré-requisitos
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js e npm instalados.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Instalação e execução local
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clone este repositório e abra a pasta do projeto no terminal.
+2. Instale as dependências:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+   ```bash
+   npm install
+   ```
 
+3. Inicie o servidor de desenvolvimento:
+
+   ```bash
+   npm run dev
+   ```
+
+4. Abra no navegador o endereço exibido pelo Vite no terminal (normalmente `http://localhost:5173`).
+
+O servidor atualiza a aplicação automaticamente quando os arquivos são alterados. Para encerrar, pressione `Ctrl+C` no terminal.
+
+## Comandos disponíveis
+
+```bash
+npm run dev       # inicia o servidor de desenvolvimento
+npm run build     # verifica os tipos e gera a versão de produção em dist/
+npm run preview   # serve localmente a versão gerada
+npm run lint      # verifica o código com ESLint
+npm run format    # formata os arquivos de src/ com Prettier
+npm run typecheck # verifica os tipos TypeScript
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Organização do código
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+- `src/domain/`: tipos e regras de negócio, separados por presets, sessões e tarefas.
+- `src/storage/`: chaves de persistência do navegador.
+- `src/hooks/`: hooks que conectam os dados e as operações à interface.
+- `src/components/`: componentes da interface.
+- `docs/`: documentos do projeto
