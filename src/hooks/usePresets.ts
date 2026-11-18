@@ -1,7 +1,4 @@
-import type {
-  DadosPreset,
-  TemporizadorPersonalizado,
-} from "../domain/preset/tipos";
+import type { DadosPreset, TemporizadorPersonalizado } from "../domain/preset/tipos";
 
 export type UsePresets = {
   presets: TemporizadorPersonalizado[];

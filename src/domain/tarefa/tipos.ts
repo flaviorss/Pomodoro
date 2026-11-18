@@ -1,10 +1,6 @@
 // Estados possíveis de uma tarefa.
 export type EstadoTarefa =
-  | "backlog"
-  | "aFazer"
-  | "emExecucao"
-  | "concluida"
-  | "cancelada";
+  "backlog" | "aFazer" | "emExecucao" | "concluida" | "cancelada";
 
 // Prioridades possíveis de uma tarefa.
 export type PrioridadeTarefa = "baixa" | "media" | "alta";

@@ -24,10 +24,7 @@ export function pularFase(_sessao: SessaoAtiva, _agora: number): SessaoAtiva {
   return naoImplementado();
 }
 
-export function reiniciarCiclos(
-  _sessao: SessaoAtiva,
-  _agora: number,
-): SessaoAtiva {
+export function reiniciarCiclos(_sessao: SessaoAtiva, _agora: number): SessaoAtiva {
   return naoImplementado();
 }
 

@@ -1,6 +1,5 @@
 export type TemporizadorPersonalizado = {
-  
-  id: string; // Identificador único. 
+  id: string; // Identificador único.
   nome: string; // Nome do preset, de 1 a 40 caracteres.
   tempoFocoMin: number; // Tempo de foco em minutos, de 1 a 120.
   tempoPausaCurtaMin: number; // Tempo de pausa curta em minutos, de 1 a 60.
