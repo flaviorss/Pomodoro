@@ -16,6 +16,8 @@ export type SessaoAtiva = {
   faseAtual: Fase;
   // Ciclo corrente, a partir de 1.
   cicloAtual: number;
+  // Permite contar o ciclo só quando foco e pausa terminam naturalmente.
+  focoConcluidoNoCiclo: boolean;
   status: StatusSessao;
   // Timestamps em milissegundos.
   inicioFaseEm: number;
