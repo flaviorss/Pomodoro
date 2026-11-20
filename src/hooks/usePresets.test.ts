@@ -1,6 +1,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DadosPreset, TemporizadorPersonalizado } from "../domain/preset/tipos";
+import { obterPresetEmUsoId } from "../domain/sessao/sessao";
+import type { SessaoAtiva, StatusSessao } from "../domain/sessao/tipos";
 import { CHAVE_PRESETS } from "../storage/chaves";
 import { usePresets, type ResultadoOperacaoPreset } from "./usePresets";
 
@@ -26,6 +28,26 @@ const PRESET_2: TemporizadorPersonalizado = {
   criadoEm: 200,
   atualizadoEm: 200,
 };
+
+function criarSessao(status: StatusSessao): SessaoAtiva {
+  const pausada = status === "pausada";
+
+  return {
+    id: "sessao-1",
+    presetId: PRESET_1.id,
+    snapshotPreset: DADOS,
+    faseAtual: "foco",
+    cicloAtual: 1,
+    focoConcluidoNoCiclo: false,
+    status,
+    inicioFaseEm: 100,
+    fimFasePrevistoEm: 1_500_100,
+    pausadaEm: pausada ? 200 : null,
+    tempoRestanteAoPausarMs: pausada ? 1_499_900 : null,
+    criadaEm: 100,
+    atualizadaEm: 200,
+  };
+}
 
 function persistir(presets: TemporizadorPersonalizado[]): void {
   window.localStorage.setItem(CHAVE_PRESETS, JSON.stringify(presets));
@@ -219,5 +241,62 @@ describe("usePresets", () => {
       mensagem: "Não foi possível salvar os dados neste navegador.",
     });
     expect(result.current.erro).toBe("Não foi possível salvar os dados neste navegador.");
+  });
+
+  it.each(["emAndamento", "pausada"] as const)(
+    "bloqueia edição e exclusão durante sessão %s",
+    (status) => {
+      persistir([PRESET_1, PRESET_2]);
+      const presetEmUsoId = obterPresetEmUsoId(criarSessao(status));
+      const gravar = vi.spyOn(window.localStorage, "setItem");
+      const { result } = renderHook(() => usePresets(presetEmUsoId));
+
+      expect(result.current.editar(PRESET_1.id, { ...DADOS, nome: "Redação" })).toEqual({
+        sucesso: false,
+        motivo: "bloqueado",
+        mensagem: "Este preset está em uso por uma sessão ativa e não pode ser editado.",
+      });
+      expect(result.current.excluir(PRESET_1.id)).toEqual({
+        sucesso: false,
+        motivo: "bloqueado",
+        mensagem: "Este preset está em uso por uma sessão ativa e não pode ser excluído.",
+      });
+      expect(result.current.presets).toEqual([PRESET_1, PRESET_2]);
+      expect(gravar).not.toHaveBeenCalled();
+    },
+  );
+
+  it("libera edição e exclusão quando a sessão está concluída", () => {
+    persistir([PRESET_1]);
+    const presetEmUsoId = obterPresetEmUsoId(criarSessao("concluida"));
+    const { result } = renderHook(() => usePresets(presetEmUsoId));
+
+    act(() => {
+      expect(result.current.editar(PRESET_1.id, { ...DADOS, nome: "Redação" })).toEqual({
+        sucesso: true,
+      });
+    });
+    act(() => {
+      expect(result.current.excluir(PRESET_1.id)).toEqual({ sucesso: true });
+    });
+
+    expect(result.current.presets).toEqual([]);
+  });
+
+  it("mantém outros presets editáveis e excluíveis durante uma sessão ativa", () => {
+    persistir([PRESET_1, PRESET_2]);
+    const presetEmUsoId = obterPresetEmUsoId(criarSessao("emAndamento"));
+    const { result } = renderHook(() => usePresets(presetEmUsoId));
+
+    act(() => {
+      expect(result.current.editar(PRESET_2.id, { ...DADOS, nome: "Redação" })).toEqual({
+        sucesso: true,
+      });
+    });
+    act(() => {
+      expect(result.current.excluir(PRESET_2.id)).toEqual({ sucesso: true });
+    });
+
+    expect(result.current.presets).toEqual([PRESET_1]);
   });
 });

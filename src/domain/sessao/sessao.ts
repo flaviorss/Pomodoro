@@ -4,6 +4,11 @@ import type { Fase, SessaoAtiva } from "./tipos";
 
 const MINUTO_EM_MS = 60_000;
 
+export function obterPresetEmUsoId(sessao: SessaoAtiva | null): string | null {
+  if (sessao === null || sessao.status === "concluida") return null;
+  return sessao.presetId;
+}
+
 function duracaoDaFase(sessao: SessaoAtiva, fase: Fase): number {
   const { snapshotPreset } = sessao;
 

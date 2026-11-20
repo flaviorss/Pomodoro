@@ -27,6 +27,10 @@ export type UsePresets = {
 };
 
 const PRESET_NAO_ENCONTRADO = "O preset informado não foi encontrado.";
+const PRESET_EM_USO_EDICAO =
+  "Este preset está em uso por uma sessão ativa e não pode ser editado.";
+const PRESET_EM_USO_EXCLUSAO =
+  "Este preset está em uso por uma sessão ativa e não pode ser excluído.";
 
 function resultadoPersistencia(erro: string | null): ResultadoOperacaoPreset {
   if (erro !== null) {
@@ -36,7 +40,7 @@ function resultadoPersistencia(erro: string | null): ResultadoOperacaoPreset {
   return { sucesso: true };
 }
 
-export function usePresets(): UsePresets {
+export function usePresets(presetEmUsoId: string | null = null): UsePresets {
   const [presets, atualizarPresets, erro] = useLocalStorage<TemporizadorPersonalizado[]>(
     CHAVE_PRESETS,
     [],
@@ -59,6 +63,9 @@ export function usePresets(): UsePresets {
     if (presetAtual === undefined) {
       return { sucesso: false, motivo: "naoEncontrado", mensagem: PRESET_NAO_ENCONTRADO };
     }
+    if (id === presetEmUsoId) {
+      return { sucesso: false, motivo: "bloqueado", mensagem: PRESET_EM_USO_EDICAO };
+    }
 
     const resultado = validarDadosPreset(dados);
     if (!resultado.valido) {
@@ -73,8 +80,12 @@ export function usePresets(): UsePresets {
   }
 
   function excluir(id: string): ResultadoOperacaoPreset {
-    if (!presets.some((preset) => preset.id === id)) {
+    const presetAtual = presets.find((preset) => preset.id === id);
+    if (presetAtual === undefined) {
       return { sucesso: false, motivo: "naoEncontrado", mensagem: PRESET_NAO_ENCONTRADO };
+    }
+    if (id === presetEmUsoId) {
+      return { sucesso: false, motivo: "bloqueado", mensagem: PRESET_EM_USO_EXCLUSAO };
     }
 
     const erroAoSalvar = atualizarPresets((anteriores) =>
