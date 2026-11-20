@@ -198,3 +198,21 @@ export function recalcular(sessao: SessaoAtiva, agora: number): SessaoAtiva {
 
   return resultado;
 }
+
+export function calcularTempoRestanteMs(sessao: SessaoAtiva, agora: number): number {
+  if (sessao.status === "concluida") return 0;
+  if (sessao.status === "pausada") {
+    return Math.max(0, sessao.tempoRestanteAoPausarMs ?? 0);
+  }
+
+  const instante = Math.max(agora, sessao.atualizadaEm);
+  return Math.max(0, sessao.fimFasePrevistoEm - instante);
+}
+
+export function formatarTempoRestante(tempoRestanteMs: number): string {
+  const totalSegundos = Math.ceil(Math.max(0, tempoRestanteMs) / 1000);
+  const minutos = Math.floor(totalSegundos / 60);
+  const segundos = totalSegundos % 60;
+
+  return `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`;
+}
