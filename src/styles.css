@@ -141,6 +141,17 @@ input:focus-visible {
   border-color: #78716c;
 }
 
+.botao--perigo {
+  color: #ffffff;
+  background: #7f1d1d;
+  border-color: #7f1d1d;
+}
+
+.botao--perigo:hover:not(:disabled) {
+  background: #991b1b;
+  border-color: #991b1b;
+}
+
 .botao:disabled {
   color: #78716c;
   background: #e7e5e4;
@@ -279,6 +290,40 @@ input:focus-visible {
   font-weight: 650;
 }
 
+.dialogo-fundo {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  padding: 1rem;
+  background: rgb(24 24 27 / 55%);
+  place-items: center;
+}
+
+.dialogo-confirmacao {
+  width: min(100%, 30rem);
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+  background: #ffffff;
+  border: 1px solid #a8a29e;
+  border-radius: 0.5rem;
+}
+
+.dialogo-confirmacao h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.375rem;
+}
+
+.dialogo-confirmacao p {
+  margin-bottom: 1.5rem;
+  color: #57534e;
+}
+
+.dialogo-confirmacao__acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
 @media (max-width: 42rem) {
   .app-shell {
     width: min(100% - 1rem, 68rem);
@@ -302,7 +347,12 @@ input:focus-visible {
   }
 
   .gerenciador-presets__cabecalho > .botao,
-  .preset-formulario__acoes .botao {
+  .preset-formulario__acoes .botao,
+  .dialogo-confirmacao__acoes .botao {
     width: 100%;
+  }
+
+  .dialogo-confirmacao__acoes {
+    flex-direction: column;
   }
 }

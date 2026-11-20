@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { DadosPreset, TemporizadorPersonalizado } from "../../domain/preset/tipos";
@@ -129,16 +129,78 @@ describe("GerenciadorPresets", () => {
     ]);
   });
 
-  it("bloqueia a edição do preset em uso com uma explicação visível", () => {
+  it("cancela a exclusão e mantém o preset", async () => {
+    persistir([PRESET]);
+    const usuario = userEvent.setup();
+    render(<GerenciadorPresets />);
+
+    await usuario.click(screen.getByRole("button", { name: "Excluir" }));
+    const dialogo = screen.getByRole("alertdialog", {
+      name: "Excluir temporizador?",
+    });
+
+    expect(dialogo).toHaveTextContent("Estudo");
+    await usuario.click(within(dialogo).getByRole("button", { name: "Cancelar" }));
+
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    expect(screen.getByRole("heading", { level: 3, name: "Estudo" })).toBeInTheDocument();
+    expect(JSON.parse(window.localStorage.getItem(CHAVE_PRESETS) ?? "null")).toEqual([
+      PRESET,
+    ]);
+  });
+
+  it("confirma a exclusão e persiste a lista atualizada", async () => {
+    persistir([PRESET]);
+    const usuario = userEvent.setup();
+    render(<GerenciadorPresets />);
+
+    await usuario.click(screen.getByRole("button", { name: "Excluir" }));
+    const dialogo = screen.getByRole("alertdialog", {
+      name: "Excluir temporizador?",
+    });
+    await usuario.click(within(dialogo).getByRole("button", { name: "Excluir" }));
+
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    expect(screen.queryByRole("heading", { level: 3, name: "Estudo" })).toBeNull();
+    expect(JSON.parse(window.localStorage.getItem(CHAVE_PRESETS) ?? "null")).toEqual([]);
+  });
+
+  it("bloqueia edição e exclusão do preset em uso com uma explicação visível", () => {
     persistir([PRESET]);
 
     render(<GerenciadorPresets presetEmUsoId={PRESET.id} />);
 
     expect(screen.getByRole("button", { name: "Editar" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Excluir" })).toBeDisabled();
     expect(
-      screen.getByText("Encerre a sessão ativa para editar este temporizador."),
+      screen.getByText(
+        "Encerre a sessão ativa para editar ou excluir este temporizador.",
+      ),
     ).toBeInTheDocument();
     expect(screen.getByText("Em uso")).toBeInTheDocument();
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+  });
+
+  it("recusa a exclusão se o preset entrar em uso com o diálogo aberto", async () => {
+    persistir([PRESET]);
+    const usuario = userEvent.setup();
+    const { rerender } = render(<GerenciadorPresets />);
+
+    await usuario.click(screen.getByRole("button", { name: "Excluir" }));
+    rerender(<GerenciadorPresets presetEmUsoId={PRESET.id} />);
+
+    const dialogo = screen.getByRole("alertdialog", {
+      name: "Excluir temporizador?",
+    });
+    await usuario.click(within(dialogo).getByRole("button", { name: "Excluir" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Este preset está em uso por uma sessão ativa e não pode ser excluído.",
+    );
+    expect(screen.getByRole("heading", { level: 3, name: "Estudo" })).toBeInTheDocument();
+    expect(JSON.parse(window.localStorage.getItem(CHAVE_PRESETS) ?? "null")).toEqual([
+      PRESET,
+    ]);
   });
 
   it("apresenta falhas de persistência em uma região de alerta", () => {

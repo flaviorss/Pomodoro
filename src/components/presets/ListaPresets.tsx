@@ -5,12 +5,14 @@ type ListaPresetsProps = {
   presets: TemporizadorPersonalizado[];
   presetEmUsoId: string | null;
   onEditar: (preset: TemporizadorPersonalizado) => void;
+  onExcluir: (preset: TemporizadorPersonalizado) => void;
 };
 
 function ListaPresets({
   presets,
   presetEmUsoId,
   onEditar,
+  onExcluir,
 }: ListaPresetsProps): JSX.Element {
   if (presets.length === 0) {
     return (
@@ -55,7 +57,7 @@ function ListaPresets({
 
               {emUso && (
                 <p id={explicacaoId} className="preset-card__aviso">
-                  Encerre a sessão ativa para editar este temporizador.
+                  Encerre a sessão ativa para editar ou excluir este temporizador.
                 </p>
               )}
 
@@ -68,6 +70,15 @@ function ListaPresets({
                   onClick={() => onEditar(preset)}
                 >
                   Editar
+                </button>
+                <button
+                  className="botao botao--secundario"
+                  type="button"
+                  disabled={emUso}
+                  aria-describedby={emUso ? explicacaoId : undefined}
+                  onClick={() => onExcluir(preset)}
+                >
+                  Excluir
                 </button>
               </div>
             </article>
