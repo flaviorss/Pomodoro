@@ -19,6 +19,19 @@ Aplicação web de gestão de foco baseada na técnica Pomodoro. O projeto está
 - Vite
 - ESLint e Prettier
 
+## Funcionalidades disponíveis
+
+- Criação, edição e exclusão de temporizadores personalizados.
+- Validação dos campos de duração, quantidade de ciclos e nome.
+- Persistência dos temporizadores e da sessão no `localStorage`.
+- Confirmação antes de excluir um temporizador.
+- Início de uma sessão e troca direta para outro temporizador.
+- Bloqueio de edição e exclusão do temporizador usado pela sessão ativa.
+- Snapshot da configuração no início da sessão, preservando seus valores originais.
+
+A contagem regressiva e os controles completos para pausar, retomar ou encerrar uma
+sessão ainda não fazem parte da interface atual.
+
 ## Como executar
 
 ### Pré-requisitos
@@ -52,8 +65,22 @@ npm run build     # verifica os tipos e gera a versão de produção em dist/
 npm run preview   # serve localmente a versão gerada
 npm run lint      # verifica o código com ESLint
 npm run format    # formata os arquivos de src/ com Prettier
+npm run test      # executa todos os testes uma vez e encerra
 npm run typecheck # verifica os tipos TypeScript
 ```
+
+## Verificação do projeto
+
+Execute a sequência abaixo antes de enviar alterações:
+
+```bash
+npm run test
+npm run typecheck
+npm run lint
+npm run build
+```
+
+Os testes usam Vitest e React Testing Library e não permanecem em modo interativo.
 
 ## Organização do código
 

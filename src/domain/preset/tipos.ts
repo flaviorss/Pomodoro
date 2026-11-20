@@ -13,3 +13,12 @@ export type DadosPreset = Omit<
   TemporizadorPersonalizado,
   "id" | "criadoEm" | "atualizadoEm"
 >;
+
+export type CampoPreset = keyof DadosPreset;
+
+export type EntradaPreset = Partial<Record<CampoPreset, unknown>>;
+
+export type ErrosPreset = Partial<Record<CampoPreset, string>>;
+
+export type ResultadoValidacaoPreset =
+  { valido: true; dados: DadosPreset } | { valido: false; erros: ErrosPreset };

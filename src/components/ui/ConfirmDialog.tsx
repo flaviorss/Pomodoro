@@ -1,20 +1,122 @@
-import type React from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  type JSX,
+  type KeyboardEvent,
+  type MouseEvent,
+} from "react";
 
 type ConfirmDialogProps = {
   aberto: boolean;
   titulo: string;
   mensagem: string;
-  // Padrão: "Confirmar".
   textoConfirmar?: string;
-  // Padrão: "Cancelar".
   textoCancelar?: string;
   onConfirmar: () => void;
   onCancelar: () => void;
 };
 
-function ConfirmDialog(_props: ConfirmDialogProps): React.JSX.Element | null {
-  // Implementação real na Parte 4.
-  return null;
+const ELEMENTOS_FOCAVEIS =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function ConfirmDialog({
+  aberto,
+  titulo,
+  mensagem,
+  textoConfirmar = "Confirmar",
+  textoCancelar = "Cancelar",
+  onConfirmar,
+  onCancelar,
+}: ConfirmDialogProps): JSX.Element | null {
+  const tituloId = useId();
+  const mensagemId = useId();
+  const dialogoRef = useRef<HTMLDivElement>(null);
+  const cancelarRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!aberto) return;
+
+    const focoAnterior =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const overflowAnterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    cancelarRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = overflowAnterior;
+      if (focoAnterior?.isConnected) focoAnterior.focus();
+    };
+  }, [aberto]);
+
+  if (!aberto) return null;
+
+  function tratarTecla(evento: KeyboardEvent<HTMLDivElement>): void {
+    if (evento.key === "Escape") {
+      evento.preventDefault();
+      evento.stopPropagation();
+      onCancelar();
+      return;
+    }
+
+    if (evento.key !== "Tab") return;
+
+    const elementos = Array.from(
+      dialogoRef.current?.querySelectorAll<HTMLElement>(ELEMENTOS_FOCAVEIS) ?? [],
+    );
+    const primeiro = elementos[0];
+    const ultimo = elementos.at(-1);
+
+    if (primeiro === undefined || ultimo === undefined) return;
+
+    if (!dialogoRef.current?.contains(document.activeElement)) {
+      evento.preventDefault();
+      (evento.shiftKey ? ultimo : primeiro).focus();
+      return;
+    }
+
+    if (evento.shiftKey && document.activeElement === primeiro) {
+      evento.preventDefault();
+      ultimo.focus();
+    } else if (!evento.shiftKey && document.activeElement === ultimo) {
+      evento.preventDefault();
+      primeiro.focus();
+    }
+  }
+
+  function dispensar(evento: MouseEvent<HTMLDivElement>): void {
+    if (evento.target === evento.currentTarget) onCancelar();
+  }
+
+  return (
+    <div className="dialogo-fundo" onMouseDown={dispensar} onKeyDown={tratarTecla}>
+      <div
+        ref={dialogoRef}
+        className="dialogo-confirmacao"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby={tituloId}
+        aria-describedby={mensagemId}
+      >
+        <h2 id={tituloId}>{titulo}</h2>
+        <p id={mensagemId}>{mensagem}</p>
+
+        <div className="dialogo-confirmacao__acoes">
+          <button
+            ref={cancelarRef}
+            className="botao botao--secundario"
+            type="button"
+            onClick={onCancelar}
+          >
+            {textoCancelar}
+          </button>
+          <button className="botao botao--perigo" type="button" onClick={onConfirmar}>
+            {textoConfirmar}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export type { ConfirmDialogProps };

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { gravar, ler, remover, type Validador } from "../storage/localStorage";
 
-export type Atualizador<T> = (valor: T | ((anterior: T) => T)) => void;
+export type Atualizador<T> = (valor: T | ((anterior: T) => T)) => string | null;
 export type EstadoLocalStorage<T> = [
   valor: T,
   atualizar: Atualizador<T>,
@@ -18,14 +18,16 @@ export function useLocalStorage<T>(
   const [estado, setEstado] = useState(() => ler(chave, valorInicial, validar));
   const valorAtual = useRef(estado.valor);
 
-  function atualizar(valorOuFuncao: T | ((anterior: T) => T)): void {
+  function atualizar(valorOuFuncao: T | ((anterior: T) => T)): string | null {
     const valor =
       typeof valorOuFuncao === "function"
         ? (valorOuFuncao as (anterior: T) => T)(valorAtual.current)
         : valorOuFuncao;
+    const erro = gravar(chave, valor);
 
     valorAtual.current = valor;
-    setEstado({ valor, erro: gravar(chave, valor) });
+    setEstado({ valor, erro });
+    return erro;
   }
 
   function descartar(): void {
