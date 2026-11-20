@@ -43,7 +43,7 @@ describe("validarDadosPreset", () => {
 
     expect(resultado).toEqual({
       valido: false,
-      erros: { nome: "Informe um nome para o preset." },
+      erros: { nome: "Informe um nome para o temporizador." },
     });
   });
 
@@ -131,7 +131,7 @@ describe("validarDadosPreset", () => {
     expect(resultado).toEqual({
       valido: false,
       erros: {
-        nome: "Informe um nome para o preset.",
+        nome: "Informe um nome para o temporizador.",
         tempoFocoMin: "O tempo de foco deve ser um número inteiro entre 1 e 120 minutos.",
         tempoPausaCurtaMin:
           "O tempo de pausa curta deve ser um número inteiro entre 1 e 60 minutos.",

@@ -8,7 +8,7 @@ import type {
 } from "./tipos";
 
 const MENSAGENS = {
-  nomeObrigatorio: "Informe um nome para o preset.",
+  nomeObrigatorio: "Informe um nome para o temporizador.",
   nomeMaximo: `O nome deve ter no máximo ${LIMITES.preset.nome.max} caracteres.`,
   tempoFocoMin: `O tempo de foco deve ser um número inteiro entre ${LIMITES.preset.tempoFocoMin.min} e ${LIMITES.preset.tempoFocoMin.max} minutos.`,
   tempoPausaCurtaMin: `O tempo de pausa curta deve ser um número inteiro entre ${LIMITES.preset.tempoPausaCurtaMin.min} e ${LIMITES.preset.tempoPausaCurtaMin.max} minutos.`,

@@ -39,9 +39,12 @@ function ConfirmDialog({
 
     const focoAnterior =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const overflowAnterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     cancelarRef.current?.focus();
 
     return () => {
+      document.body.style.overflow = overflowAnterior;
       if (focoAnterior?.isConnected) focoAnterior.focus();
     };
   }, [aberto]);
@@ -65,6 +68,12 @@ function ConfirmDialog({
     const ultimo = elementos.at(-1);
 
     if (primeiro === undefined || ultimo === undefined) return;
+
+    if (!dialogoRef.current?.contains(document.activeElement)) {
+      evento.preventDefault();
+      (evento.shiftKey ? ultimo : primeiro).focus();
+      return;
+    }
 
     if (evento.shiftKey && document.activeElement === primeiro) {
       evento.preventDefault();

@@ -211,12 +211,12 @@ describe("usePresets", () => {
     expect(result.current.editar("inexistente", DADOS)).toEqual({
       sucesso: false,
       motivo: "naoEncontrado",
-      mensagem: "O preset informado não foi encontrado.",
+      mensagem: "O temporizador informado não foi encontrado.",
     });
     expect(result.current.excluir("inexistente")).toEqual({
       sucesso: false,
       motivo: "naoEncontrado",
-      mensagem: "O preset informado não foi encontrado.",
+      mensagem: "O temporizador informado não foi encontrado.",
     });
     expect(result.current.presets).toEqual([PRESET_1]);
     expect(JSON.parse(window.localStorage.getItem(CHAVE_PRESETS) ?? "null")).toEqual([
@@ -254,12 +254,14 @@ describe("usePresets", () => {
       expect(result.current.editar(PRESET_1.id, { ...DADOS, nome: "Redação" })).toEqual({
         sucesso: false,
         motivo: "bloqueado",
-        mensagem: "Este preset está em uso por uma sessão ativa e não pode ser editado.",
+        mensagem:
+          "Este temporizador está em uso por uma sessão ativa e não pode ser editado.",
       });
       expect(result.current.excluir(PRESET_1.id)).toEqual({
         sucesso: false,
         motivo: "bloqueado",
-        mensagem: "Este preset está em uso por uma sessão ativa e não pode ser excluído.",
+        mensagem:
+          "Este temporizador está em uso por uma sessão ativa e não pode ser excluído.",
       });
       expect(result.current.presets).toEqual([PRESET_1, PRESET_2]);
       expect(gravar).not.toHaveBeenCalled();

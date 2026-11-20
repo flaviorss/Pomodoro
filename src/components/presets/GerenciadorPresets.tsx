@@ -1,21 +1,27 @@
 import { useState, type JSX } from "react";
 import type { EntradaPreset, TemporizadorPersonalizado } from "../../domain/preset/tipos";
-import { usePresets, type ResultadoOperacaoPreset } from "../../hooks/usePresets";
+import type { ResultadoOperacaoPreset, UsePresets } from "../../hooks/usePresets";
+import type { UseSessao } from "../../hooks/useSessao";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import FormularioPreset from "./FormularioPreset";
 import ListaPresets from "./ListaPresets";
 
 type GerenciadorPresetsProps = {
-  presetEmUsoId?: string | null;
+  controlePresets: UsePresets;
+  controleSessao: UseSessao;
+  presetEmUsoId: string | null;
 };
 
 type FormularioAberto =
   { modo: "criacao" } | { modo: "edicao"; preset: TemporizadorPersonalizado } | null;
 
 function GerenciadorPresets({
-  presetEmUsoId = null,
+  controlePresets,
+  controleSessao,
+  presetEmUsoId,
 }: GerenciadorPresetsProps): JSX.Element {
-  const { presets, erro, criar, editar, excluir } = usePresets(presetEmUsoId);
+  const { presets, erro: erroPresets, criar, editar, excluir } = controlePresets;
+  const { sessao, erro: erroSessao, iniciar, trocarPreset } = controleSessao;
   const [formulario, setFormulario] = useState<FormularioAberto>(null);
   const [presetParaExcluir, setPresetParaExcluir] =
     useState<TemporizadorPersonalizado | null>(null);
@@ -39,6 +45,13 @@ function GerenciadorPresets({
     setPresetParaExcluir(preset);
   }
 
+  function selecionarPreset(preset: TemporizadorPersonalizado): void {
+    if (preset.id === presetEmUsoId) return;
+
+    if (presetEmUsoId === null) iniciar(preset);
+    else trocarPreset(preset);
+  }
+
   function confirmarExclusao(): void {
     if (presetParaExcluir === null) return;
 
@@ -60,7 +73,10 @@ function GerenciadorPresets({
   }
 
   return (
-    <section className="gerenciador-presets" aria-labelledby="titulo-presets">
+    <section
+      className={`gerenciador-presets${formulario !== null ? " gerenciador-presets--editando" : ""}`}
+      aria-labelledby="titulo-presets"
+    >
       <div className="gerenciador-presets__cabecalho">
         <div>
           <h2 id="titulo-presets">Temporizadores personalizados</h2>
@@ -76,9 +92,25 @@ function GerenciadorPresets({
         )}
       </div>
 
-      {erro !== null && (
+      {sessao !== null && presetEmUsoId !== null && (
+        <aside className="sessao-resumo" aria-labelledby="titulo-sessao-ativa">
+          <h3 id="titulo-sessao-ativa">Sessão ativa</h3>
+          <p>
+            <strong>{sessao.snapshotPreset.nome}</strong>
+            <span>{sessao.status === "pausada" ? "Pausada" : "Em andamento"}</span>
+          </p>
+        </aside>
+      )}
+
+      {erroPresets !== null && (
         <p className="mensagem mensagem--erro" role="alert">
-          {erro}
+          <strong>Temporizadores:</strong> {erroPresets}
+        </p>
+      )}
+
+      {erroSessao !== null && (
+        <p className="mensagem mensagem--erro" role="alert">
+          <strong>Sessão:</strong> {erroSessao}
         </p>
       )}
 
@@ -100,6 +132,7 @@ function GerenciadorPresets({
       <ListaPresets
         presets={presets}
         presetEmUsoId={presetEmUsoId}
+        onSelecionar={selecionarPreset}
         onEditar={abrirEdicao}
         onExcluir={abrirExclusao}
       />

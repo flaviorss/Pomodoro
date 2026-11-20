@@ -1,7 +1,10 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { DadosPreset, TemporizadorPersonalizado } from "../../domain/preset/tipos";
+import { usePresets } from "../../hooks/usePresets";
+import { useSessao } from "../../hooks/useSessao";
 import { CHAVE_PRESETS } from "../../storage/chaves";
 import GerenciadorPresets from "./GerenciadorPresets";
 
@@ -24,6 +27,23 @@ function persistir(presets: TemporizadorPersonalizado[]): void {
   window.localStorage.setItem(CHAVE_PRESETS, JSON.stringify(presets));
 }
 
+function GerenciadorTeste({
+  presetEmUsoId = null,
+}: {
+  presetEmUsoId?: string | null;
+}): React.JSX.Element {
+  const controlePresets = usePresets(presetEmUsoId);
+  const controleSessao = useSessao();
+
+  return (
+    <GerenciadorPresets
+      controlePresets={controlePresets}
+      controleSessao={controleSessao}
+      presetEmUsoId={presetEmUsoId}
+    />
+  );
+}
+
 async function preencherFormulario(
   usuario: ReturnType<typeof userEvent.setup>,
 ): Promise<void> {
@@ -41,7 +61,7 @@ beforeEach(() => {
 describe("GerenciadorPresets", () => {
   it("cria e exibe um temporizador válido", async () => {
     const usuario = userEvent.setup();
-    render(<GerenciadorPresets />);
+    render(<GerenciadorTeste />);
 
     await usuario.click(screen.getByRole("button", { name: "Novo temporizador" }));
     await preencherFormulario(usuario);
@@ -49,6 +69,7 @@ describe("GerenciadorPresets", () => {
 
     expect(screen.getByRole("heading", { level: 3, name: "Estudo" })).toBeInTheDocument();
     expect(screen.getByText("25 min")).toBeInTheDocument();
+    expect(screen.getByText("1 temporizador cadastrado")).toBeInTheDocument();
     expect(JSON.parse(window.localStorage.getItem(CHAVE_PRESETS) ?? "null")).toEqual([
       expect.objectContaining(DADOS),
     ]);
@@ -56,7 +77,7 @@ describe("GerenciadorPresets", () => {
 
   it("mostra erros nos campos e impede a criação inválida", async () => {
     const usuario = userEvent.setup();
-    render(<GerenciadorPresets />);
+    render(<GerenciadorTeste />);
 
     await usuario.click(screen.getByRole("button", { name: "Novo temporizador" }));
     const salvar = screen.getByRole("button", { name: "Salvar temporizador" });
@@ -68,7 +89,7 @@ describe("GerenciadorPresets", () => {
     }
 
     expect(screen.getByLabelText("Nome")).toHaveAttribute("aria-invalid", "true");
-    expect(screen.getByText("Informe um nome para o preset.")).toBeInTheDocument();
+    expect(screen.getByText("Informe um nome para o temporizador.")).toBeInTheDocument();
     expect(
       screen.getByText(
         "O tempo de foco deve ser um número inteiro entre 1 e 120 minutos.",
@@ -80,7 +101,7 @@ describe("GerenciadorPresets", () => {
 
   it("cancela a criação sem persistir dados", async () => {
     const usuario = userEvent.setup();
-    render(<GerenciadorPresets />);
+    render(<GerenciadorTeste />);
 
     await usuario.click(screen.getByRole("button", { name: "Novo temporizador" }));
     await usuario.type(screen.getByLabelText("Nome"), "Rascunho");
@@ -93,7 +114,7 @@ describe("GerenciadorPresets", () => {
   it("abre o formulário preenchido e salva a edição", async () => {
     persistir([PRESET]);
     const usuario = userEvent.setup();
-    render(<GerenciadorPresets />);
+    render(<GerenciadorTeste />);
 
     await usuario.click(screen.getByRole("button", { name: "Editar" }));
     expect(screen.getByLabelText("Nome")).toHaveValue("Estudo");
@@ -116,7 +137,7 @@ describe("GerenciadorPresets", () => {
   it("cancela a edição preservando os dados anteriores", async () => {
     persistir([PRESET]);
     const usuario = userEvent.setup();
-    render(<GerenciadorPresets />);
+    render(<GerenciadorTeste />);
 
     await usuario.click(screen.getByRole("button", { name: "Editar" }));
     await usuario.clear(screen.getByLabelText("Nome"));
@@ -132,7 +153,7 @@ describe("GerenciadorPresets", () => {
   it("cancela a exclusão e mantém o preset", async () => {
     persistir([PRESET]);
     const usuario = userEvent.setup();
-    render(<GerenciadorPresets />);
+    render(<GerenciadorTeste />);
 
     await usuario.click(screen.getByRole("button", { name: "Excluir" }));
     const dialogo = screen.getByRole("alertdialog", {
@@ -152,7 +173,7 @@ describe("GerenciadorPresets", () => {
   it("confirma a exclusão e persiste a lista atualizada", async () => {
     persistir([PRESET]);
     const usuario = userEvent.setup();
-    render(<GerenciadorPresets />);
+    render(<GerenciadorTeste />);
 
     await usuario.click(screen.getByRole("button", { name: "Excluir" }));
     const dialogo = screen.getByRole("alertdialog", {
@@ -168,7 +189,7 @@ describe("GerenciadorPresets", () => {
   it("bloqueia edição e exclusão do preset em uso com uma explicação visível", () => {
     persistir([PRESET]);
 
-    render(<GerenciadorPresets presetEmUsoId={PRESET.id} />);
+    render(<GerenciadorTeste presetEmUsoId={PRESET.id} />);
 
     expect(screen.getByRole("button", { name: "Editar" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Excluir" })).toBeDisabled();
@@ -184,10 +205,10 @@ describe("GerenciadorPresets", () => {
   it("recusa a exclusão se o preset entrar em uso com o diálogo aberto", async () => {
     persistir([PRESET]);
     const usuario = userEvent.setup();
-    const { rerender } = render(<GerenciadorPresets />);
+    const { rerender } = render(<GerenciadorTeste />);
 
     await usuario.click(screen.getByRole("button", { name: "Excluir" }));
-    rerender(<GerenciadorPresets presetEmUsoId={PRESET.id} />);
+    rerender(<GerenciadorTeste presetEmUsoId={PRESET.id} />);
 
     const dialogo = screen.getByRole("alertdialog", {
       name: "Excluir temporizador?",
@@ -195,7 +216,7 @@ describe("GerenciadorPresets", () => {
     await usuario.click(within(dialogo).getByRole("button", { name: "Excluir" }));
 
     expect(screen.getByRole("alert")).toHaveTextContent(
-      "Este preset está em uso por uma sessão ativa e não pode ser excluído.",
+      "Este temporizador está em uso por uma sessão ativa e não pode ser excluído.",
     );
     expect(screen.getByRole("heading", { level: 3, name: "Estudo" })).toBeInTheDocument();
     expect(JSON.parse(window.localStorage.getItem(CHAVE_PRESETS) ?? "null")).toEqual([
@@ -204,11 +225,12 @@ describe("GerenciadorPresets", () => {
   });
 
   it("apresenta falhas de persistência em uma região de alerta", () => {
-    vi.spyOn(window.localStorage, "getItem").mockImplementation(() => {
-      throw new Error("falha simulada");
+    vi.spyOn(window.localStorage, "getItem").mockImplementation((chave) => {
+      if (chave === CHAVE_PRESETS) throw new Error("falha simulada");
+      return null;
     });
 
-    render(<GerenciadorPresets />);
+    render(<GerenciadorTeste />);
 
     expect(screen.getByRole("alert")).toHaveTextContent(
       "Não foi possível ler os dados salvos neste navegador.",

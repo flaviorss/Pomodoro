@@ -38,6 +38,7 @@ describe("ConfirmDialog", () => {
     const cancelar = within(dialogo).getByRole("button", { name: "Cancelar" });
     const confirmar = within(dialogo).getByRole("button", { name: "Excluir" });
 
+    expect(document.body).toHaveStyle({ overflow: "hidden" });
     expect(cancelar).toHaveFocus();
     await usuario.tab();
     expect(confirmar).toHaveFocus();
@@ -50,6 +51,7 @@ describe("ConfirmDialog", () => {
 
     expect(screen.queryByRole("alertdialog")).toBeNull();
     expect(abrir).toHaveFocus();
+    expect(document.body.style.overflow).toBe("");
   });
 
   it("pode ser dispensado ao clicar fora do conteúdo", () => {

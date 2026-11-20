@@ -26,11 +26,11 @@ export type UsePresets = {
   excluir: (id: string) => ResultadoOperacaoPreset;
 };
 
-const PRESET_NAO_ENCONTRADO = "O preset informado não foi encontrado.";
+const PRESET_NAO_ENCONTRADO = "O temporizador informado não foi encontrado.";
 const PRESET_EM_USO_EDICAO =
-  "Este preset está em uso por uma sessão ativa e não pode ser editado.";
+  "Este temporizador está em uso por uma sessão ativa e não pode ser editado.";
 const PRESET_EM_USO_EXCLUSAO =
-  "Este preset está em uso por uma sessão ativa e não pode ser excluído.";
+  "Este temporizador está em uso por uma sessão ativa e não pode ser excluído.";
 
 function resultadoPersistencia(erro: string | null): ResultadoOperacaoPreset {
   if (erro !== null) {
