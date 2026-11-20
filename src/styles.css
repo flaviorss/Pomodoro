@@ -31,7 +31,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -92,6 +93,13 @@ h3 {
   color: #57534e;
 }
 
+.app-conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.painel-sessao,
 .gerenciador-presets {
   min-width: 0;
   padding: clamp(1.25rem, 4vw, 2rem);
@@ -100,6 +108,7 @@ h3 {
   border-radius: 0.75rem;
 }
 
+.painel-sessao__cabecalho,
 .gerenciador-presets__cabecalho,
 .preset-formulario__cabecalho,
 .preset-card__cabecalho {
@@ -107,6 +116,124 @@ h3 {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.painel-sessao__preset {
+  margin-bottom: 0;
+  color: #57534e;
+}
+
+.painel-sessao__preset strong {
+  color: #292524;
+}
+
+.painel-sessao__retomada {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: #fafaf9;
+  border: 1px solid #a8a29e;
+  border-radius: 0.5rem;
+}
+
+.painel-sessao__retomada-conteudo {
+  min-width: 0;
+}
+
+.painel-sessao__retomada-titulo {
+  margin-bottom: 0.25rem;
+  color: #292524;
+  font-weight: 650;
+}
+
+.painel-sessao__retomada-aviso {
+  margin-bottom: 0;
+  color: #57534e;
+  font-size: 0.875rem;
+}
+
+.painel-sessao__retomada-acoes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.painel-sessao__display {
+  margin-top: 1.25rem;
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+  background: #fafaf9;
+  border: 1px solid #d6d3d1;
+  border-radius: 0.5rem;
+}
+
+.painel-sessao__relogio {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.painel-sessao__tempo {
+  color: #18181b;
+  font-size: clamp(2.75rem, 8vw, 4.25rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.painel-sessao__indicadores {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 0;
+  padding-top: 1rem;
+  border-top: 1px solid #e7e5e4;
+}
+
+.painel-sessao__indicadores > div {
+  min-width: 0;
+}
+
+.painel-sessao__indicadores dt {
+  color: #57534e;
+  font-size: 0.875rem;
+}
+
+.painel-sessao__indicadores dd {
+  margin-bottom: 0;
+  color: #292524;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.painel-sessao__concluida {
+  margin: 1.25rem 0 0;
+  padding: 0.875rem 1rem;
+  color: #292524;
+  font-weight: 650;
+  background: #f5f5f4;
+  border: 1px solid #d6d3d1;
+  border-radius: 0.375rem;
+}
+
+.painel-sessao__seletor {
+  margin-top: 1.25rem;
+}
+
+.painel-sessao__vazio {
+  margin: 1.25rem 0 0;
+  color: #57534e;
+}
+
+.painel-sessao__acoes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
 }
 
 .gerenciador-presets__descricao {
@@ -127,7 +254,8 @@ h3 {
 }
 
 .botao:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible {
   outline: 3px solid #1d4ed8;
   outline-offset: 2px;
 }
@@ -211,7 +339,8 @@ input:focus-visible {
   font-weight: 650;
 }
 
-.campo input {
+.campo input,
+.campo select {
   min-width: 0;
   width: 100%;
   min-height: 2.875rem;
@@ -404,7 +533,8 @@ input:focus-visible {
   }
 
   .preset-formulario__campos,
-  .preset-card__parametros {
+  .preset-card__parametros,
+  .painel-sessao__indicadores {
     grid-template-columns: 1fr;
   }
 
@@ -416,11 +546,15 @@ input:focus-visible {
   .gerenciador-presets__cabecalho > .botao,
   .preset-formulario__acoes .botao,
   .preset-card__acoes .botao,
+  .painel-sessao__acoes .botao,
+  .painel-sessao__retomada-acoes .botao,
   .dialogo-confirmacao__acoes .botao {
     width: 100%;
   }
 
-  .preset-card__acoes {
+  .preset-card__acoes,
+  .painel-sessao__acoes,
+  .painel-sessao__retomada-acoes {
     align-items: stretch;
     flex-direction: column;
   }

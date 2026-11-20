@@ -10,6 +10,7 @@ type GerenciadorPresetsProps = {
   controlePresets: UsePresets;
   controleSessao: UseSessao;
   presetEmUsoId: string | null;
+  onLiberarAudio?: () => void;
 };
 
 type FormularioAberto =
@@ -19,9 +20,10 @@ function GerenciadorPresets({
   controlePresets,
   controleSessao,
   presetEmUsoId,
+  onLiberarAudio,
 }: GerenciadorPresetsProps): JSX.Element {
   const { presets, erro: erroPresets, criar, editar, excluir } = controlePresets;
-  const { sessao, erro: erroSessao, iniciar, trocarPreset } = controleSessao;
+  const { iniciar, trocarPreset } = controleSessao;
   const [formulario, setFormulario] = useState<FormularioAberto>(null);
   const [presetParaExcluir, setPresetParaExcluir] =
     useState<TemporizadorPersonalizado | null>(null);
@@ -48,6 +50,7 @@ function GerenciadorPresets({
   function selecionarPreset(preset: TemporizadorPersonalizado): void {
     if (preset.id === presetEmUsoId) return;
 
+    onLiberarAudio?.();
     if (presetEmUsoId === null) iniciar(preset);
     else trocarPreset(preset);
   }
@@ -92,25 +95,9 @@ function GerenciadorPresets({
         )}
       </div>
 
-      {sessao !== null && presetEmUsoId !== null && (
-        <aside className="sessao-resumo" aria-labelledby="titulo-sessao-ativa">
-          <h3 id="titulo-sessao-ativa">Sessão ativa</h3>
-          <p>
-            <strong>{sessao.snapshotPreset.nome}</strong>
-            <span>{sessao.status === "pausada" ? "Pausada" : "Em andamento"}</span>
-          </p>
-        </aside>
-      )}
-
       {erroPresets !== null && (
         <p className="mensagem mensagem--erro" role="alert">
           <strong>Temporizadores:</strong> {erroPresets}
-        </p>
-      )}
-
-      {erroSessao !== null && (
-        <p className="mensagem mensagem--erro" role="alert">
-          <strong>Sessão:</strong> {erroSessao}
         </p>
       )}
 
