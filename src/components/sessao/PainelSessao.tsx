@@ -209,11 +209,7 @@ function PainelSessao({
       )}
 
       <div className="painel-sessao__display">
-        <div
-          className="painel-sessao__relogio"
-          role="timer"
-          aria-label="Tempo restante"
-        >
+        <div className="painel-sessao__relogio" role="timer" aria-label="Tempo restante">
           <span className="painel-sessao__tempo">{tempoFormatado}</span>
         </div>
 
@@ -274,21 +270,13 @@ function PainelSessao({
         )}
 
         {sessao !== null && sessao.status === "emAndamento" && (
-          <button
-            className="botao botao--primario"
-            type="button"
-            onClick={tratarPausar}
-          >
+          <button className="botao botao--primario" type="button" onClick={tratarPausar}>
             Pausar
           </button>
         )}
 
         {sessao !== null && sessao.status === "pausada" && (
-          <button
-            className="botao botao--primario"
-            type="button"
-            onClick={tratarRetomar}
-          >
+          <button className="botao botao--primario" type="button" onClick={tratarRetomar}>
             Retomar
           </button>
         )}

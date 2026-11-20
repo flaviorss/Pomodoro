@@ -13,8 +13,7 @@ type JanelaComAudio = Window & {
 function criarContextoAudio(): AudioContext | null {
   if (typeof window === "undefined") return null;
 
-  const Construtor =
-    window.AudioContext ?? (window as JanelaComAudio).webkitAudioContext;
+  const Construtor = window.AudioContext ?? (window as JanelaComAudio).webkitAudioContext;
   if (Construtor === undefined) return null;
 
   try {
