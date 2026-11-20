@@ -1,4 +1,4 @@
-import { LIMITES } from "../limites";
+import { ehDadosPreset } from "../preset/validacao";
 import type { DadosPreset } from "../preset/tipos";
 import type { Fase, SessaoAtiva, StatusSessao } from "./tipos";
 
@@ -20,39 +20,6 @@ function ehInteiroNoIntervalo(
 
 function ehTimestamp(valor: unknown): valor is number {
   return typeof valor === "number" && Number.isFinite(valor) && valor >= 0;
-}
-
-function ehDadosPreset(valor: unknown): valor is DadosPreset {
-  if (typeof valor !== "object" || valor === null) return false;
-
-  const preset = valor as Record<string, unknown>;
-  const nome = preset.nome;
-
-  return (
-    typeof nome === "string" &&
-    nome.trim().length >= LIMITES.preset.nome.min &&
-    nome.length <= LIMITES.preset.nome.max &&
-    ehInteiroNoIntervalo(
-      preset.tempoFocoMin,
-      LIMITES.preset.tempoFocoMin.min,
-      LIMITES.preset.tempoFocoMin.max,
-    ) &&
-    ehInteiroNoIntervalo(
-      preset.tempoPausaCurtaMin,
-      LIMITES.preset.tempoPausaCurtaMin.min,
-      LIMITES.preset.tempoPausaCurtaMin.max,
-    ) &&
-    ehInteiroNoIntervalo(
-      preset.ciclosAntesPausaLonga,
-      LIMITES.preset.ciclosAntesPausaLonga.min,
-      LIMITES.preset.ciclosAntesPausaLonga.max,
-    ) &&
-    ehInteiroNoIntervalo(
-      preset.tempoPausaLongaMin,
-      LIMITES.preset.tempoPausaLongaMin.min,
-      LIMITES.preset.tempoPausaLongaMin.max,
-    )
-  );
 }
 
 export function ehSessaoAtiva(valor: unknown): valor is SessaoAtiva {
