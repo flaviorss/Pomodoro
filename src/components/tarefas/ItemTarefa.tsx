@@ -6,9 +6,15 @@ type ItemTarefaProps = {
   tarefa: Tarefa;
   onEditar: (tarefa: Tarefa) => void;
   onExcluir: (tarefa: Tarefa) => void;
+  refBotaoEditar?: (node: HTMLButtonElement | null) => void;
 };
 
-function ItemTarefa({ tarefa, onEditar, onExcluir }: ItemTarefaProps): JSX.Element {
+function ItemTarefa({
+  tarefa,
+  onEditar,
+  onExcluir,
+  refBotaoEditar,
+}: ItemTarefaProps): JSX.Element {
   return (
     <li className="tarefa-card">
       <article aria-labelledby={`tarefa-${tarefa.id}-titulo`}>
@@ -17,14 +23,17 @@ function ItemTarefa({ tarefa, onEditar, onExcluir }: ItemTarefaProps): JSX.Eleme
         </div>
 
         <div className="tarefa-card__detalhes">
-          <span className="tarefa-card__tag">Estado: {ROTULO_ESTADO[tarefa.estado]}</span>
           <span className="tarefa-card__tag">
-            Prioridade: {ROTULO_PRIORIDADE[tarefa.prioridade]}
+            Estado: <strong>{ROTULO_ESTADO[tarefa.estado]}</strong>
+          </span>
+          <span className="tarefa-card__tag">
+            Prioridade: <strong>{ROTULO_PRIORIDADE[tarefa.prioridade]}</strong>
           </span>
         </div>
 
         <div className="tarefa-card__acoes">
           <button
+            ref={refBotaoEditar}
             className="botao botao--secundario"
             type="button"
             aria-label={`Editar tarefa ${tarefa.titulo}`}

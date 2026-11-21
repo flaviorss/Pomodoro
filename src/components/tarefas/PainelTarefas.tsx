@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useState, useRef, type JSX } from "react";
 import type { DadosTarefa, Tarefa } from "../../domain/tarefa/tipos";
 import type { ResultadoOperacaoTarefa, UseTarefas } from "../../hooks/useTarefas";
 import ConfirmDialog from "../ui/ConfirmDialog";
@@ -19,13 +19,35 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
   const [formulario, setFormulario] = useState<FormularioAberto>(null);
   const [tarefaParaExcluir, setTarefaParaExcluir] = useState<Tarefa | null>(null);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
+  const botaoNovoRef = useRef<HTMLButtonElement>(null);
+  const botoesEdicaoRef = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   function salvar(dados: DadosTarefa): ResultadoOperacaoTarefa {
     const resultado =
       formulario?.modo === "edicao" ? editar(formulario.tarefa.id, dados) : criar(dados);
 
-    if (resultado.sucesso) setFormulario(null);
+    if (resultado.sucesso) {
+      const tarefaId = formulario?.modo === "edicao" ? formulario.tarefa.id : null;
+      setFormulario(null);
+      devolverFoco(tarefaId);
+    }
     return resultado;
+  }
+
+  function cancelarFormulario(): void {
+    const tarefaId = formulario?.modo === "edicao" ? formulario.tarefa.id : null;
+    setFormulario(null);
+    devolverFoco(tarefaId);
+  }
+
+  function devolverFoco(tarefaId: string | null): void {
+    setTimeout(() => {
+      if (tarefaId !== null) {
+        botoesEdicaoRef.current.get(tarefaId)?.focus();
+      } else {
+        botaoNovoRef.current?.focus();
+      }
+    }, 0);
   }
 
   function abrirEdicao(tarefa: Tarefa): void {
@@ -41,14 +63,16 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
   function confirmarExclusao(): void {
     if (tarefaParaExcluir === null) return;
 
-    const resultado = excluir(tarefaParaExcluir.id);
+    const idExcluido = tarefaParaExcluir.id;
+    const resultado = excluir(idExcluido);
 
     if (resultado.sucesso) {
       if (
         formulario?.modo === "edicao" &&
-        formulario.tarefa.id === tarefaParaExcluir.id
+        formulario.tarefa.id === idExcluido
       ) {
         setFormulario(null);
+        devolverFoco(null);
       }
       setErroAcao(null);
     } else if (resultado.motivo !== "validacao" && resultado.motivo !== "persistencia") {
@@ -69,6 +93,7 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
         </div>
         {formulario === null && (
           <button
+            ref={botaoNovoRef}
             className="botao botao--primario"
             type="button"
             onClick={() => setFormulario({ modo: "criacao" })}
@@ -95,7 +120,7 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
           key={formulario.modo === "edicao" ? formulario.tarefa.id : "novo"}
           tarefa={formulario.modo === "edicao" ? formulario.tarefa : undefined}
           onSalvar={salvar}
-          onCancelar={() => setFormulario(null)}
+          onCancelar={cancelarFormulario}
         />
       )}
 
@@ -103,6 +128,10 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
         tarefas={tarefas}
         onEditar={abrirEdicao}
         onExcluir={abrirExclusao}
+        onRegistrarBotaoEditar={(id, node) => {
+          if (node) botoesEdicaoRef.current.set(id, node);
+          else botoesEdicaoRef.current.delete(id);
+        }}
       />
 
       {tarefaParaExcluir !== null && (

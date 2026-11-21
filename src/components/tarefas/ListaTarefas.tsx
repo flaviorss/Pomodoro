@@ -6,9 +6,15 @@ type ListaTarefasProps = {
   tarefas: Tarefa[];
   onEditar: (tarefa: Tarefa) => void;
   onExcluir: (tarefa: Tarefa) => void;
+  onRegistrarBotaoEditar?: (id: string, node: HTMLButtonElement | null) => void;
 };
 
-function ListaTarefas({ tarefas, onEditar, onExcluir }: ListaTarefasProps): JSX.Element {
+function ListaTarefas({
+  tarefas,
+  onEditar,
+  onExcluir,
+  onRegistrarBotaoEditar,
+}: ListaTarefasProps): JSX.Element {
   if (tarefas.length === 0) {
     return (
       <div className="estado-vazio" role="status">
@@ -30,6 +36,7 @@ function ListaTarefas({ tarefas, onEditar, onExcluir }: ListaTarefasProps): JSX.
             tarefa={tarefa}
             onEditar={onEditar}
             onExcluir={onExcluir}
+            refBotaoEditar={(node) => onRegistrarBotaoEditar?.(tarefa.id, node)}
           />
         ))}
       </ul>
