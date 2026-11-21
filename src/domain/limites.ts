@@ -10,8 +10,3 @@ export const LIMITES = {
     titulo: { min: 1, max: 100 },
   },
 } as const;
-
-export const TAREFA_PADRAO = {
-  estado: "backlog",
-  prioridade: "media",
-} as const;
