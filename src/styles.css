@@ -94,13 +94,26 @@ h3 {
 }
 
 .app-conteudo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.app-principal {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-width: 0;
+}
+
+.painel-lateral {
+  min-width: 0;
 }
 
 .painel-sessao,
-.gerenciador-presets {
+.gerenciador-presets,
+.gerenciador-tarefas {
   min-width: 0;
   padding: clamp(1.25rem, 4vw, 2rem);
   background: #ffffff;
@@ -110,8 +123,11 @@ h3 {
 
 .painel-sessao__cabecalho,
 .gerenciador-presets__cabecalho,
+.gerenciador-tarefas__cabecalho,
 .preset-formulario__cabecalho,
-.preset-card__cabecalho {
+.tarefa-formulario__cabecalho,
+.preset-card__cabecalho,
+.tarefa-card__cabecalho {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -515,6 +531,12 @@ select:focus-visible {
   gap: 0.75rem;
 }
 
+@media (max-width: 56.25rem) {
+  .app-conteudo {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 42rem) {
   .botao,
   .preset-card__em-uso {
@@ -527,25 +549,33 @@ select:focus-visible {
   }
 
   .gerenciador-presets__cabecalho,
-  .preset-formulario__cabecalho {
+  .gerenciador-tarefas__cabecalho,
+  .preset-formulario__cabecalho,
+  .tarefa-formulario__cabecalho {
     align-items: stretch;
     flex-direction: column;
   }
 
   .preset-formulario__campos,
+  .tarefa-formulario__campos,
   .preset-card__parametros,
   .painel-sessao__indicadores {
     grid-template-columns: 1fr;
   }
 
   .campo--nome,
-  .preset-formulario__acoes {
+  .campo--titulo,
+  .preset-formulario__acoes,
+  .tarefa-formulario__acoes {
     grid-column: auto;
   }
 
   .gerenciador-presets__cabecalho > .botao,
+  .gerenciador-tarefas__cabecalho > .botao,
   .preset-formulario__acoes .botao,
+  .tarefa-formulario__acoes .botao,
   .preset-card__acoes .botao,
+  .tarefa-card__acoes .botao,
   .painel-sessao__acoes .botao,
   .painel-sessao__retomada-acoes .botao,
   .dialogo-confirmacao__acoes .botao {
@@ -553,6 +583,7 @@ select:focus-visible {
   }
 
   .preset-card__acoes,
+  .tarefa-card__acoes,
   .painel-sessao__acoes,
   .painel-sessao__retomada-acoes {
     align-items: stretch;
