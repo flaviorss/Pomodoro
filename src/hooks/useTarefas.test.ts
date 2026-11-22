@@ -155,7 +155,7 @@ describe("useTarefas", () => {
     act(() => {
       operacao = result.current.criar({
         titulo: "",
-        estado: "estadoInvalido" as any,
+        estado: "estadoInvalido" as DadosTarefa["estado"],
         prioridade: "alta",
       });
     });
