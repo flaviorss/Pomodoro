@@ -6,6 +6,12 @@
   --bg-pagina: #f7f8fc;
   --bg-superficie: #ffffff;
   --bg-secundario: #f3f2fd;
+  --bg-painel-sessao: #f1f0ff;
+  --bg-painel-tarefas: #eff7fc;
+  --bg-painel-presets: #f7f1ff;
+  --borda-painel-sessao: var(--cor-lavanda-suave);
+  --borda-painel-tarefas: #c8e1f0;
+  --borda-painel-presets: #e5d7fa;
   --texto-principal: #1e293b;
   --texto-secundario: #475569;
   --borda-suave: #d9ddf0;
@@ -140,10 +146,24 @@ h3 {
 .gerenciador-tarefas {
   min-width: 0;
   padding: clamp(1.25rem, 4vw, 2rem);
-  background: var(--bg-superficie);
-  border: 1px solid var(--borda-suave);
+  border: 1px solid;
   border-radius: var(--raio-card);
   box-shadow: var(--sombra-card);
+}
+
+.painel-sessao {
+  background: var(--bg-painel-sessao);
+  border-color: var(--borda-painel-sessao);
+}
+
+.gerenciador-tarefas {
+  background: var(--bg-painel-tarefas);
+  border-color: var(--borda-painel-tarefas);
+}
+
+.gerenciador-presets {
+  background: var(--bg-painel-presets);
+  border-color: var(--borda-painel-presets);
 }
 
 .painel-sessao__cabecalho,
