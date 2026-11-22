@@ -110,12 +110,17 @@ describe("PainelSessao", () => {
     const usuario = userEvent.setup();
     render(<PainelTeste />);
 
-    await usuario.click(screen.getByRole("button", { name: "Iniciar" }));
-    await usuario.click(screen.getByRole("button", { name: "Pausar" }));
-
+    await usuario.tab();
+    await usuario.tab();
+    expect(screen.getByRole("button", { name: "Iniciar" })).toHaveFocus();
+    await usuario.keyboard("{Enter}");
+    expect(screen.getByRole("button", { name: "Pausar" })).toHaveFocus();
+    await usuario.keyboard("{Enter}");
     expect(screen.getByText("Pausada")).toBeInTheDocument();
 
-    await usuario.click(screen.getByRole("button", { name: "Retomar" }));
+    expect(screen.getByRole("button", { name: "Retomar" })).toHaveFocus();
+    await usuario.keyboard("{Enter}");
+    expect(screen.getByRole("button", { name: "Pausar" })).toHaveFocus();
     expect(screen.getByText("Em andamento")).toBeInTheDocument();
 
     await usuario.click(screen.getByRole("button", { name: "Pular fase" }));

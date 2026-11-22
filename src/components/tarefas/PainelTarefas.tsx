@@ -20,7 +20,8 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
   const [tarefaParaExcluir, setTarefaParaExcluir] = useState<Tarefa | null>(null);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
   const botaoNovoRef = useRef<HTMLButtonElement>(null);
-  const botoesEdicaoRef = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const tituloRef = useRef<HTMLHeadingElement>(null);
+  const botoesAcoesRef = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   function salvar(dados: DadosTarefa): ResultadoOperacaoTarefa {
     const resultado =
@@ -42,17 +43,24 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
 
   function devolverFoco(tarefaId: string | null): void {
     setTimeout(() => {
-      if (tarefaId !== null) {
-        botoesEdicaoRef.current.get(tarefaId)?.focus();
-      } else {
-        botaoNovoRef.current?.focus();
-      }
+      const botaoAcoes = tarefaId === null ? null : botoesAcoesRef.current.get(tarefaId);
+      (botaoAcoes ?? botaoNovoRef.current ?? tituloRef.current)?.focus();
     }, 0);
   }
 
   function abrirEdicao(tarefa: Tarefa): void {
     setErroAcao(null);
+    if (formulario?.modo === "edicao" && formulario.tarefa.id === tarefa.id) {
+      document.getElementById("tarefa-titulo")?.focus();
+    }
     setFormulario({ modo: "edicao", tarefa });
+  }
+
+  function concluir({ id, titulo, prioridade }: Tarefa): void {
+    const resultado = editar(id, { titulo, prioridade, estado: "concluida" });
+    setErroAcao(
+      !resultado.sucesso && resultado.motivo === "naoEncontrada" ? resultado.mensagem : null,
+    );
   }
 
   function abrirExclusao(tarefa: Tarefa): void {
@@ -72,8 +80,8 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
         formulario.tarefa.id === idExcluido
       ) {
         setFormulario(null);
-        devolverFoco(null);
       }
+      devolverFoco(null);
       setErroAcao(null);
     } else if (resultado.motivo !== "validacao" && resultado.motivo !== "persistencia") {
       setErroAcao(resultado.mensagem);
@@ -88,9 +96,9 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
       aria-labelledby="titulo-tarefas"
     >
       <div className="gerenciador-tarefas__cabecalho">
-        <div>
-          <h2 id="titulo-tarefas">Gerenciamento de tarefas</h2>
-        </div>
+        <h2 id="titulo-tarefas" ref={tituloRef} tabIndex={-1}>
+          Tarefas
+        </h2>
         {formulario === null && (
           <button
             ref={botaoNovoRef}
@@ -126,11 +134,12 @@ function PainelTarefas({ controleTarefas }: PainelTarefasProps): JSX.Element {
 
       <ListaTarefas
         tarefas={tarefas}
+        onConcluir={concluir}
         onEditar={abrirEdicao}
         onExcluir={abrirExclusao}
         onRegistrarBotaoEditar={(id, node) => {
-          if (node) botoesEdicaoRef.current.set(id, node);
-          else botoesEdicaoRef.current.delete(id);
+          if (node) botoesAcoesRef.current.set(id, node);
+          else botoesAcoesRef.current.delete(id);
         }}
       />
 

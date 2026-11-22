@@ -4,6 +4,7 @@ import ItemTarefa from "./ItemTarefa";
 
 type ListaTarefasProps = {
   tarefas: Tarefa[];
+  onConcluir?: (tarefa: Tarefa) => void;
   onEditar: (tarefa: Tarefa) => void;
   onExcluir: (tarefa: Tarefa) => void;
   onRegistrarBotaoEditar?: (id: string, node: HTMLButtonElement | null) => void;
@@ -11,6 +12,7 @@ type ListaTarefasProps = {
 
 function ListaTarefas({
   tarefas,
+  onConcluir,
   onEditar,
   onExcluir,
   onRegistrarBotaoEditar,
@@ -34,6 +36,7 @@ function ListaTarefas({
           <ItemTarefa
             key={tarefa.id}
             tarefa={tarefa}
+            onConcluir={onConcluir}
             onEditar={onEditar}
             onExcluir={onExcluir}
             refBotaoEditar={(node) => onRegistrarBotaoEditar?.(tarefa.id, node)}

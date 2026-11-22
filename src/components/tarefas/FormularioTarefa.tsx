@@ -14,8 +14,6 @@ import {
   type CampoTarefa,
   type DadosTarefa,
   type ErrosTarefa,
-  type EstadoTarefa,
-  type PrioridadeTarefa,
   type Tarefa,
 } from "../../domain/tarefa/tipos";
 import { validarDadosTarefa } from "../../domain/tarefa/validacao";

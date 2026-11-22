@@ -172,7 +172,7 @@ describe("App", () => {
     const sessaoAntes = obterSessaoPersistida();
 
     const painelTarefas = screen.getByRole("complementary", {
-      name: "Gerenciamento de tarefas",
+      name: "Tarefas",
     });
     await usuario.click(
       within(painelTarefas).getByRole("button", { name: "Nova tarefa" }),

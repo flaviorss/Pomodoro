@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useRef, useState, type JSX } from "react";
 import type { EntradaPreset, TemporizadorPersonalizado } from "../../domain/preset/tipos";
 import type { ResultadoOperacaoPreset, UsePresets } from "../../hooks/usePresets";
 import type { UseSessao } from "../../hooks/useSessao";
@@ -28,12 +28,18 @@ function GerenciadorPresets({
   const [presetParaExcluir, setPresetParaExcluir] =
     useState<TemporizadorPersonalizado | null>(null);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
+  const tituloRef = useRef<HTMLHeadingElement>(null);
+
+  function fecharFormulario(): void {
+    setFormulario(null);
+    tituloRef.current?.focus();
+  }
 
   function salvar(dados: EntradaPreset): ResultadoOperacaoPreset {
     const resultado =
       formulario?.modo === "edicao" ? editar(formulario.preset.id, dados) : criar(dados);
 
-    if (resultado.sucesso) setFormulario(null);
+    if (resultado.sucesso) fecharFormulario();
     return resultado;
   }
 
@@ -68,6 +74,7 @@ function GerenciadorPresets({
         setFormulario(null);
       }
       setErroAcao(null);
+      tituloRef.current?.focus();
     } else if (resultado.motivo !== "validacao" && resultado.motivo !== "persistencia") {
       setErroAcao(resultado.mensagem);
     }
@@ -82,7 +89,9 @@ function GerenciadorPresets({
     >
       <div className="gerenciador-presets__cabecalho">
         <div>
-          <h2 id="titulo-presets">Temporizadores personalizados</h2>
+          <h2 id="titulo-presets" ref={tituloRef} tabIndex={-1}>
+            Temporizadores personalizados
+          </h2>
         </div>
         {formulario === null && (
           <button
@@ -112,7 +121,7 @@ function GerenciadorPresets({
           key={formulario.modo === "edicao" ? formulario.preset.id : "novo"}
           preset={formulario.modo === "edicao" ? formulario.preset : undefined}
           onSalvar={salvar}
-          onCancelar={() => setFormulario(null)}
+          onCancelar={fecharFormulario}
         />
       )}
 

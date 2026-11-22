@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -32,6 +32,19 @@ function persistir(tarefas: Tarefa[]): void {
 function PainelTeste(): React.JSX.Element {
   const controleTarefas = useTarefas();
   return <PainelTarefas controleTarefas={controleTarefas} />;
+}
+
+function botaoAcoes(titulo: string): HTMLElement {
+  return screen.getByRole("button", { name: `Ações da tarefa ${titulo}` });
+}
+
+async function selecionarAcao(
+  usuario: ReturnType<typeof userEvent.setup>,
+  titulo: string,
+  acao: "Editar" | "Excluir",
+): Promise<void> {
+  await usuario.click(botaoAcoes(titulo));
+  await usuario.click(screen.getByRole("menuitem", { name: acao }));
 }
 
 beforeEach(() => {
@@ -86,7 +99,7 @@ describe("PainelTarefas", () => {
     expect(cabecalhos[1]).toHaveTextContent("Tarefa Baixa");
 
     // Editar TAREFA_1 para prioridade alta e estado aFazer
-    await usuario.click(screen.getAllByRole("button", { name: /Editar tarefa/ })[1]!);
+    await selecionarAcao(usuario, TAREFA_1.titulo, "Editar");
 
     expect(screen.getByLabelText("Título")).toHaveValue("Tarefa Baixa");
 
@@ -101,6 +114,7 @@ describe("PainelTarefas", () => {
     const cabecalhosAtualizados = screen.getAllByRole("heading", { level: 3 });
     expect(cabecalhosAtualizados[0]).toHaveTextContent("Tarefa Baixa Editada");
     expect(cabecalhosAtualizados[1]).toHaveTextContent("Tarefa Alta");
+    await waitFor(() => expect(botaoAcoes("Tarefa Baixa Editada")).toHaveFocus());
   });
 
   it("UC14: cancela ou confirma exclusão e fecha formulário se a tarefa em edição for excluída (D6)", async () => {
@@ -109,20 +123,21 @@ describe("PainelTarefas", () => {
     render(<PainelTeste />);
 
     // 1. Cancelar exclusão
-    await usuario.click(screen.getAllByRole("button", { name: /Excluir tarefa/ })[0]!);
+    await selecionarAcao(usuario, TAREFA_2.titulo, "Excluir");
     const dialogo = screen.getByRole("alertdialog", { name: "Excluir tarefa?" });
     expect(dialogo).toHaveTextContent("Tarefa Alta");
 
     await usuario.click(within(dialogo).getByRole("button", { name: "Cancelar" }));
     expect(screen.queryByRole("alertdialog")).toBeNull();
     expect(screen.getByText("Tarefa Alta")).toBeInTheDocument();
+    expect(botaoAcoes(TAREFA_2.titulo)).toHaveFocus();
 
     // 2. Abrir edição de TAREFA_1
-    await usuario.click(screen.getAllByRole("button", { name: /Editar tarefa/ })[1]!);
+    await selecionarAcao(usuario, TAREFA_1.titulo, "Editar");
     expect(screen.getByRole("heading", { name: "Editar tarefa" })).toBeInTheDocument();
 
     // 3. Excluir TAREFA_1 enquanto está sendo editada (D6)
-    await usuario.click(screen.getAllByRole("button", { name: /Excluir tarefa/ })[1]!);
+    await selecionarAcao(usuario, TAREFA_1.titulo, "Excluir");
     const dialogoExclusao = screen.getByRole("alertdialog", { name: "Excluir tarefa?" });
     await usuario.click(within(dialogoExclusao).getByRole("button", { name: "Excluir" }));
 
@@ -130,6 +145,66 @@ describe("PainelTarefas", () => {
     expect(screen.queryByRole("heading", { name: "Editar tarefa" })).toBeNull();
     expect(screen.queryByText("Tarefa Baixa")).toBeNull();
     expect(screen.getByText("Tarefa Alta")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole("button", { name: "Nova tarefa" })).toHaveFocus());
+  });
+
+  it("opera o menu por teclado e restaura o foco ao cancelar a edição", async () => {
+    persistir([TAREFA_1]);
+    const usuario = userEvent.setup();
+    render(<PainelTeste />);
+
+    const novaTarefa = screen.getByRole("button", { name: "Nova tarefa" });
+    const checkbox = screen.getByRole("checkbox", { name: `Concluir tarefa ${TAREFA_1.titulo}` });
+    const gatilho = botaoAcoes(TAREFA_1.titulo);
+    await usuario.tab();
+    expect(novaTarefa).toHaveFocus();
+    await usuario.tab();
+    expect(checkbox).toHaveFocus();
+    await usuario.tab();
+    expect(gatilho).toHaveFocus();
+    expect(screen.queryByRole("menuitem")).toBeNull();
+
+    await usuario.keyboard("{Enter}");
+    expect(gatilho).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("menuitem", { name: "Editar" })).toHaveFocus();
+    await usuario.keyboard("{ArrowDown}");
+    expect(screen.getByRole("menuitem", { name: "Excluir" })).toHaveFocus();
+    await usuario.keyboard("{Escape}");
+    expect(gatilho).toHaveFocus();
+    expect(gatilho).toHaveAttribute("aria-expanded", "false");
+
+    await usuario.keyboard(" ");
+    await usuario.click(screen.getByRole("heading", { name: "Tarefas" }));
+    expect(screen.queryByRole("menu")).toBeNull();
+
+    await usuario.click(gatilho);
+    await usuario.tab({ shift: true });
+    expect(screen.queryByRole("menu")).toBeNull();
+    expect(checkbox).toHaveFocus();
+    await usuario.tab({ shift: true });
+    expect(novaTarefa).toHaveFocus();
+
+    await selecionarAcao(usuario, TAREFA_1.titulo, "Editar");
+    await usuario.clear(screen.getByLabelText("Título"));
+    await usuario.click(screen.getByRole("button", { name: "Cancelar" }));
+    expect(screen.getByText(TAREFA_1.titulo)).toBeInTheDocument();
+    await waitFor(() => expect(gatilho).toHaveFocus());
+  });
+
+  it("volta ao campo do título ao reabrir a mesma edição e preserva o rascunho", async () => {
+    persistir([TAREFA_1]);
+    const usuario = userEvent.setup();
+    render(<PainelTeste />);
+
+    await selecionarAcao(usuario, TAREFA_1.titulo, "Editar");
+    const titulo = screen.getByRole("textbox", { name: "Título" });
+    await usuario.type(titulo, " em edição");
+
+    botaoAcoes(TAREFA_1.titulo).focus();
+    await usuario.keyboard("{Enter}{Enter}");
+
+    expect(titulo).toHaveFocus();
+    expect(titulo).toHaveValue("Tarefa Baixa em edição");
   });
 
   it("UC15: exibe listagem ordenada e estado vazio", () => {
