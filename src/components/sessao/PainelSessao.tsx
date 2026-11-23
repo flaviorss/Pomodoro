@@ -153,6 +153,11 @@ function PainelSessao({
     setConfirmacao(null);
   }
 
+  const podeIniciar = sessao === null || sessao.status === "concluida";
+  const emAndamento = sessao?.status === "emAndamento";
+  const acaoPrincipal = podeIniciar ? tratarIniciar : emAndamento ? tratarPausar : tratarRetomar;
+  const rotuloAcaoPrincipal = podeIniciar ? "Iniciar" : emAndamento ? "Pausar" : "Retomar";
+
   return (
     <section className="painel-sessao" aria-labelledby="titulo-sessao">
       <div className="painel-sessao__cabecalho">
@@ -258,28 +263,14 @@ function PainelSessao({
         ))}
 
       <div className="painel-sessao__acoes">
-        {(sessao === null || sessao.status === "concluida") && (
-          <button
-            className="botao botao--primario"
-            type="button"
-            disabled={presetSelecionado === null}
-            onClick={tratarIniciar}
-          >
-            Iniciar
-          </button>
-        )}
-
-        {sessao !== null && sessao.status === "emAndamento" && (
-          <button className="botao botao--primario" type="button" onClick={tratarPausar}>
-            Pausar
-          </button>
-        )}
-
-        {sessao !== null && sessao.status === "pausada" && (
-          <button className="botao botao--primario" type="button" onClick={tratarRetomar}>
-            Retomar
-          </button>
-        )}
+        <button
+          className="botao botao--primario"
+          type="button"
+          disabled={podeIniciar && presetSelecionado === null}
+          onClick={acaoPrincipal}
+        >
+          {rotuloAcaoPrincipal}
+        </button>
 
         {sessao !== null && sessao.status !== "concluida" && (
           <>

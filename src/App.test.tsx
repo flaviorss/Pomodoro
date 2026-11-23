@@ -161,18 +161,46 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
-  it("apresenta erros de sessão e presets separadamente", () => {
+  it("mantém a sessão ativa intacta ao criar e excluir tarefas (RN-09)", async () => {
+    persistirPresets();
+    const usuario = userEvent.setup();
+    render(<App />);
+
+    await usuario.click(
+      within(itemDoPreset("Estudo")).getByRole("button", { name: "Iniciar" }),
+    );
+    const sessaoAntes = obterSessaoPersistida();
+
+    const painelTarefas = screen.getByRole("complementary", {
+      name: "Tarefas",
+    });
+    await usuario.click(
+      within(painelTarefas).getByRole("button", { name: "Nova tarefa" }),
+    );
+    await usuario.type(within(painelTarefas).getByLabelText("Título"), "Revisar grafo");
+    await usuario.click(
+      within(painelTarefas).getByRole("button", { name: "Salvar tarefa" }),
+    );
+
+    expect(within(painelTarefas).getByText("Revisar grafo")).toBeInTheDocument();
+    expect(obterSessaoPersistida()).toEqual(sessaoAntes);
+  });
+
+  it("apresenta erros de sessão, presets e tarefas separadamente", () => {
     vi.spyOn(window.localStorage, "getItem").mockImplementation(() => {
       throw new Error("falha simulada");
     });
 
     render(<App />);
 
-    expect(screen.getAllByRole("alert")).toHaveLength(2);
+    expect(screen.getAllByRole("alert")).toHaveLength(3);
     expect(
       screen.getByText("Temporizadores:").closest('[role="alert"]'),
     ).toHaveTextContent("Não foi possível ler os dados salvos neste navegador.");
     expect(screen.getByText("Sessão:").closest('[role="alert"]')).toHaveTextContent(
+      "Não foi possível ler os dados salvos neste navegador.",
+    );
+    expect(screen.getByText("Tarefas:").closest('[role="alert"]')).toHaveTextContent(
       "Não foi possível ler os dados salvos neste navegador.",
     );
   });
