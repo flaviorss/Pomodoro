@@ -95,11 +95,11 @@ function GerenciadorPresets({
         </div>
         {formulario === null && (
           <button
-            className="botao botao--primario"
+            className="botao botao--primario tn"
             type="button"
             onClick={() => setFormulario({ modo: "criacao" })}
           >
-            Novo temporizador
+            Novo Temporizador
           </button>
         )}
       </div>

@@ -269,6 +269,16 @@ function PainelSessao({
           disabled={podeIniciar && presetSelecionado === null}
           onClick={acaoPrincipal}
         >
+          {podeIniciar && (
+            <svg
+              className="botao__icone-play"
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M4.5 2.8a.8.8 0 0 1 1.2-.7l8 5.2a.8.8 0 0 1 0 1.4l-8 5.2a.8.8 0 0 1-1.2-.7V2.8Z" fill="currentColor" />
+            </svg>
+          )}
           {rotuloAcaoPrincipal}
         </button>
 

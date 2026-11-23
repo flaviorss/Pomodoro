@@ -18,7 +18,10 @@ function App(): React.JSX.Element {
   return (
     <div className="app-shell">
       <header className="app-cabecalho">
-        <h1>Pomodoro</h1>
+        <h1 className="app-titulo">
+          <span className="app-titulo__icone" aria-hidden="true" />
+          <span>Pomodoro</span>
+        </h1>
       </header>
 
       <main className="app-conteudo">

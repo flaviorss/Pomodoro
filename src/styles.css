@@ -1,22 +1,18 @@
 :root {
   --cor-lavanda-suave: #d3d3ff;
-  --cor-lilas-destaque: #ceb5ff;
+  --cor-lilas-destaque: #f5f5f5;
   --cor-azul-sereno: #8ec1de;
-  --cor-azul-acao: #80a8ff;
-  --bg-pagina: #f7f8fc;
+  --cor-azul-acao: #9CD5FF;
+  --bg-pagina: #f0f1f3;
   --bg-superficie: #ffffff;
-  --bg-secundario: #f3f2fd;
-  --bg-painel-sessao: #f1f0ff;
-  --bg-painel-tarefas: #eff7fc;
-  --bg-painel-presets: #f7f1ff;
-  --borda-painel-sessao: var(--cor-lavanda-suave);
-  --borda-painel-tarefas: #c8e1f0;
-  --borda-painel-presets: #e5d7fa;
+  --bg-secundario: #f5f5f5;
+  --bg-painel: #ffffff;
+  --borda-painel: #9CD5FF;
   --texto-principal: #1e293b;
   --texto-secundario: #475569;
   --borda-suave: #d9ddf0;
   --borda-controle: #64748b;
-  --cor-foco: #3445a6;
+  --cor-foco: #9CD5FF;
   --texto-perigo: #7f1d1d;
   --cor-perigo-ativa: #991b1b;
   --borda-perigo: #b91c1c;
@@ -29,14 +25,7 @@
   --largura-conteudo: 68rem;
   --espaco-paineis: 1.5rem;
 
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: "DM Sans", system-ui, sans-serif;
   color: var(--texto-principal);
   background: var(--bg-pagina);
   font-synthesis: none;
@@ -96,6 +85,23 @@ h1 {
   font-size: clamp(1.5rem, 3vw, 2rem);
 }
 
+.app-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 0;
+  font-weight: 750;
+}
+
+.app-titulo__icone {
+  width: 1.25rem;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #7AAACE;
+  box-shadow: inset -2px -2px 0 rgb(0 0 0 / 12%);
+}
+
 h2 {
   margin-bottom: 0.5rem;
   font-size: clamp(1.375rem, 4vw, 1.75rem);
@@ -115,7 +121,6 @@ h3 {
 .app-cabecalho {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--borda-suave);
 }
 
 .app-cabecalho p {
@@ -152,18 +157,18 @@ h3 {
 }
 
 .painel-sessao {
-  background: var(--bg-painel-sessao);
-  border-color: var(--borda-painel-sessao);
+  background: var(--bg-painel);
+  border-color: var(--borda-painel);
 }
 
 .gerenciador-tarefas {
-  background: var(--bg-painel-tarefas);
-  border-color: var(--borda-painel-tarefas);
+  background: var(--bg-painel);
+  border-color: var(--borda-painel);
 }
 
 .gerenciador-presets {
-  background: var(--bg-painel-presets);
-  border-color: var(--borda-painel-presets);
+  background: var(--bg-painel);
+  border-color: var(--borda-painel);
 }
 
 .painel-sessao__cabecalho,
@@ -197,7 +202,7 @@ h3 {
   gap: 1rem;
   margin-top: 1.25rem;
   padding: 1rem;
-  background: var(--bg-secundario);
+  background: #f5f5f5;
   border: 1px solid var(--borda-controle);
   border-radius: var(--raio-controle);
 }
@@ -228,8 +233,8 @@ h3 {
 .painel-sessao__display {
   margin-top: 1.25rem;
   padding: clamp(1.25rem, 4vw, 1.75rem);
-  background: var(--cor-lavanda-suave);
-  border: 1px solid var(--cor-lilas-destaque);
+  background: #c6e0f3;
+  border: 1px solid var(--borda-painel);
   border-radius: var(--raio-controle);
 }
 
@@ -311,7 +316,7 @@ h3 {
   font-size: 0.9375rem;
   font-weight: 650;
   background: var(--bg-superficie);
-  border: 1px solid var(--borda-controle);
+  border: 1px solid #9CD5FF;
   border-radius: var(--raio-controle);
 }
 
@@ -326,14 +331,25 @@ select:focus-visible {
   background: var(--cor-azul-acao);
 }
 
+.botao__icone-play {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-right: 0.375rem;
+  vertical-align: -0.125rem;
+}
+
 .botao--primario:hover:not(:disabled) {
-  background: var(--cor-azul-sereno);
-  border-color: var(--texto-secundario);
+  background: #398bca;
+  border-color: #9CD5FF;
 }
 
 .botao--secundario:hover:not(:disabled) {
-  background: var(--bg-pagina);
-  border-color: var(--texto-secundario);
+  background: var(--bg-secundario);
+  border-color: #355872;
+}
+
+.tn{
+  line-height: 1.2;
 }
 
 .botao--perigo {
@@ -660,7 +676,7 @@ select:focus-visible {
   padding: 2rem 1rem;
   color: var(--texto-secundario);
   text-align: center;
-  background: var(--bg-secundario);
+  background: #f5f5f5;
   border: 1px solid var(--borda-suave);
   border-radius: var(--raio-controle);
 }
