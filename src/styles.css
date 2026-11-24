@@ -620,13 +620,21 @@ select:focus-visible {
 }
 
 .tarefa-card__estado--aFazer,
-.tarefa-card__prioridade--media {
+.tarefa-card__estado--emExecucao,
+.tarefa-card__estado--backlog {
   background: var(--cor-lavanda-suave);
 }
 
-.tarefa-card__estado--emExecucao,
 .tarefa-card__prioridade--alta {
-  background: var(--cor-lilas-destaque);
+  background: #fecaca;
+}
+
+.tarefa-card__prioridade--media {
+  background: #fde68a;
+}
+
+.tarefa-card__prioridade--baixa {
+  background: #bbf7d0;
 }
 
 .tarefa-card__estado--concluida {
