@@ -94,11 +94,10 @@ h1 {
 }
 
 .app-titulo__icone {
-  width: 1.25rem;
+  width: 1.6rem;
   aspect-ratio: 1;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #7AAACE;
   box-shadow: inset -2px -2px 0 rgb(0 0 0 / 12%);
 }
 

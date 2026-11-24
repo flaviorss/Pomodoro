@@ -19,7 +19,7 @@ function App(): React.JSX.Element {
     <div className="app-shell">
       <header className="app-cabecalho">
         <h1 className="app-titulo">
-          <span className="app-titulo__icone" aria-hidden="true" />
+          <img className="app-titulo__icone" src="https://cdn-icons-png.flaticon.com/512/2909/2909894.png" alt="Ícone do Pomodoro" />
           <span>Pomodoro</span>
         </h1>
       </header>
