@@ -232,9 +232,33 @@ h3 {
 .painel-sessao__display {
   margin-top: 1.25rem;
   padding: clamp(1.25rem, 4vw, 1.75rem);
-  background: #c6e0f3;
-  border: 1px solid var(--borda-painel);
+  background: #f1f3f5;
+  border: 1px solid #d6dce2;
   border-radius: var(--raio-controle);
+  transition:
+    background-color 350ms ease,
+    border-color 350ms ease;
+}
+
+.painel-sessao__display--foco {
+  background: #c6e0f3;
+  border-color: #8ec1de;
+}
+
+.painel-sessao__display--pausaCurta {
+  background: #dff2e5;
+  border-color: #a8d5b5;
+}
+
+.painel-sessao__display--pausaLonga {
+  background: #e9e1f7;
+  border-color: #c7b5e8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painel-sessao__display {
+    transition: none;
+  }
 }
 
 .painel-sessao__relogio {

@@ -99,6 +99,8 @@ function PainelSessao({
         : "—";
   const statusExibido =
     sessao !== null ? ROTULO_STATUS_SESSAO[sessao.status] : "Aguardando início";
+  const faseDoPainel =
+    sessao === null || sessao.status === "concluida" ? "aguardando" : sessao.faseAtual;
 
   const tituloDocumento =
     sessao !== null && sessao.status !== "concluida"
@@ -213,7 +215,7 @@ function PainelSessao({
         </div>
       )}
 
-      <div className="painel-sessao__display">
+      <div className={`painel-sessao__display painel-sessao__display--${faseDoPainel}`}>
         <div className="painel-sessao__relogio" role="timer" aria-label="Tempo restante">
           <span className="painel-sessao__tempo">{tempoFormatado}</span>
         </div>
