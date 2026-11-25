@@ -1,4 +1,14 @@
-# Pomodoro
+<div align="center"  >
+  <h1 align="center" >
+    Pomodoro
+    <br />
+  </h1>
+ <img src="https://skillicons.dev/icons?i=react" alt=""> &nbsp;
+ <img src="https://skillicons.dev/icons?i=ts" alt=""> &nbsp;
+ <img src="https://skillicons.dev/icons?i=vite" alt=""> &nbsp;
+</div>
+
+## Sobre o Projeto
 
 Aplicação web para organizar sessões de foco no estilo Pomodoro e gerenciar tarefas de estudo. O projeto foi desenvolvido em equipe como parte da disciplina de Desenvolvimento Web.
 
@@ -63,7 +73,7 @@ npm run build
 - `src/hooks/`: estado da aplicação, persistência e operações usadas pela interface.
 - `src/components/`: componentes da interface, separados por funcionalidade.
 - `src/styles.css`: estilos globais e responsivos.
-- `docs/`: documentação de requisitos e decisões de implementação.
+- `docs/`: documentação de requisitos
 
 ## Desenvolvedores
 | Foto | Nome | Github |
